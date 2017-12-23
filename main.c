@@ -19,6 +19,7 @@ void insertNode ( listPT listP, int data ) {
          listP->headP->prevP = nodeP;
       nodeP->nextP        = listP->headP;
       listP->headP        = nodeP;
+      listP->count++;
    }
    // Insertion in between
    else{
@@ -34,6 +35,7 @@ void insertNode ( listPT listP, int data ) {
                currentP->nextP->prevP = nodeP;
             currentP->nextP        = nodeP;
             nodeP->prevP           = currentP;
+            listP->count++;
             break;
          }
          currentP         = currentP->nextP;

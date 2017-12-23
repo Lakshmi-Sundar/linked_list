@@ -2,32 +2,41 @@
 
 
 void printList (listPT listP) {
-   nodePT tempP    = listP->headP; 
-   while( tempP != NULL ) {
-      printf("%d\n", tempP->data);
-      tempP        = tempP->nextP;
+   nodePT currentP    = listP->headP; 
+   while( currentP != NULL ) {
+      printf("%d\n", currentP->data);
+      currentP        = currentP->nextP;
    }
 }
 
 void insertNode ( listPT listP, int data ) {
    // Insertion at beginning
    if(listP->headP == NULL || listP->headP->data > data) {
-      nodePT nodeP  = createNode ( data );
-      nodeP->nextP  = listP->headP;
-      listP->headP  = nodeP;
+      nodePT nodeP        = createNode ( data );
+      // headP has the address of the one it is currently pointing to.
+      // so the next of your new node will be the following chain.
+      if( listP->headP != NULL )
+         listP->headP->prevP = nodeP;
+      nodeP->nextP        = listP->headP;
+      listP->headP        = nodeP;
    }
    // Insertion in between
    else{
-      nodePT tempP  = listP->headP;
-      while( tempP != NULL && tempP->data < data ) {
+      nodePT currentP  = listP->headP;
+      while( currentP != NULL && currentP->data < data ) {
          // Special condition in if to check for nextP == NULL cases 
-         if( tempP->data < data && ( !(tempP->nextP) || tempP->nextP->data > data ) ) {
-            nodePT nodeP = createNode ( data );
-            nodeP->nextP = tempP->nextP;
-            tempP->nextP = nodeP;
+         if( currentP->data < data && ( !(currentP->nextP) || currentP->nextP->data > data ) ) {
+            nodePT nodeP           = createNode ( data );
+            nodeP->nextP           = currentP->nextP;
+            // The previous pointer of your next node must point to the one you are inserting
+            // The next pointer of the current node must point to the one you are inserting
+            if(currentP->nextP != NULL)
+               currentP->nextP->prevP = nodeP;
+            currentP->nextP        = nodeP;
+            nodeP->prevP           = currentP;
             break;
          }
-         tempP         = tempP->nextP;
+         currentP         = currentP->nextP;
       }
    }
 }
@@ -46,7 +55,6 @@ void main () {
    insertNode( listP, 1 );
    insertNode( listP, 2 );
    insertNode( listP, 5 );
-   printList(listP);
    insertNode( listP, 3 );
    insertNode( listP, 0 );
    printList(listP);

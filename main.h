@@ -6,6 +6,7 @@ typedef struct _listT* listPT;
 
 typedef struct _nodeT {
    nodePT nextP;
+   nodePT prevP;
    int data;
 }nodeT;
 

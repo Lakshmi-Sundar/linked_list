@@ -1,15 +1,29 @@
 #include "main.h"
+#include "main.h"
+
+#define ASSERT( cond, format, ... ) \
+   if( cond ){ \
+      printf("[%s@%s] Error in %s:%d => " format "\n", __DATE__, __TIME__, __FILE__, __LINE__, ##__VA_ARGS__); \
+      exit(0); \
+   }
+
+inline int listNodeCount ( listPT listP ) {
+   ASSERT ( !listP, "List not allocated" );
+   return listP->count;
+}
 
 
-void printList (listPT listP) {
-   nodePT currentP    = listP->headP; 
+void printList (listPT listP, listDirT dir) {
+   ASSERT ( !listP, "List not allocated" );
+   nodePT currentP    = (dir == LIST_DIR_FWD) ? listP->headP : listP->tailP; 
    while( currentP != NULL ) {
       printf("%d\n", currentP->data);
-      currentP        = currentP->nextP;
+      currentP        = (dir == LIST_DIR_FWD) ? currentP->nextP : currentP->prevP;
    }
 }
 
 void insertNode ( listPT listP, int data ) {
+   ASSERT ( !listP, "List not allocated" );
    // Insertion at beginning
    if(listP->headP == NULL || listP->headP->data > data) {
       nodePT nodeP        = createNode ( data );
@@ -17,6 +31,8 @@ void insertNode ( listPT listP, int data ) {
       // so the next of your new node will be the following chain.
       if( listP->headP != NULL )
          listP->headP->prevP = nodeP;
+      else
+         listP->tailP     = nodeP;
       nodeP->nextP        = listP->headP;
       listP->headP        = nodeP;
       listP->count++;
@@ -33,6 +49,8 @@ void insertNode ( listPT listP, int data ) {
             // The next pointer of the current node must point to the one you are inserting
             if(currentP->nextP != NULL)
                currentP->nextP->prevP = nodeP;
+            else
+               listP->tailP        = nodeP;
             currentP->nextP        = nodeP;
             nodeP->prevP           = currentP;
             listP->count++;
@@ -53,11 +71,11 @@ nodePT createNode ( int data ) {
 
 void main () {
    listPT listP = (listPT) calloc( 1, sizeof(listT) );
-
    insertNode( listP, 1 );
    insertNode( listP, 2 );
    insertNode( listP, 5 );
    insertNode( listP, 3 );
    insertNode( listP, 0 );
-   printList(listP);
+   printList(listP, LIST_DIR_FWD);
+   printList(listP, LIST_DIR_BKD);
 }

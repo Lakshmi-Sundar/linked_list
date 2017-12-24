@@ -22,7 +22,86 @@ void printList (listPT listP, listDirT dir) {
    }
 }
 
-void insertNode ( listPT listP, int data ) {
+
+//// 1 => Success
+//// 0 => Failure
+//int deleteNode ( listPT listP, int data ) {
+//   // Defaultig success to failure
+//   int success        = 0;
+//   nodePT currentP    = listP->headP;
+//   // Traversal until data found with advanced loop ending for not-found data
+//   while( currentP != NULL  ){
+//      if( currentP->data == data && currentP->data <= data ){
+//         // Data found! Modify links and free it
+//         // Take care of boundary conditions
+//         if( currentP == listP->headP ){
+//            // Data to be deleted is first node
+//            listP->headP = currentP->nextP;
+//         }
+//         if( currentP == listP->tailP ){
+//            // Data to be deleted is last node
+//            listP->tailP = currentP->prevP;
+//         }
+//
+//         // Link mods required
+//         // What if ->prevP/->nextP are null?
+//         if( currentP->prevP != NULL )
+//            currentP->prevP->nextP = currentP->nextP;
+//         if( currentP->nextP != NULL )
+//            currentP->nextP->prevP = currentP->prevP;
+//
+//         success                   = 1;
+//         listP->count--;
+//         free( currentP );
+//         break;
+//      }
+//      currentP                     = currentP->nextP;
+//   }
+//   return success;
+//}
+
+// 1 => Success
+// 0 => Failure
+int deleteNode (listPT listP, int data ) {
+   //1. Traverse from head to where you want to delete the node
+   //2. Update its prevP and nextP, and update the neighbouring links
+   //3. Free the deleted node
+   ASSERT ( !listP, "List not allocated" );
+   nodePT currentP = listP->headP;
+   while(currentP != NULL) {
+      if(currentP->data == data) {
+         //1. Deleting the very first node
+         if(currentP->prevP == NULL) {
+            if(currentP->nextP != NULL) {
+               currentP->nextP->prevP = NULL;
+            }
+            else 
+               listP->tailP           = currentP->nextP;
+            listP->headP           = currentP->nextP;
+       
+         }
+         //2. Deleting the last node
+         else if(currentP->nextP == NULL) {
+            if(currentP->prevP != NULL) {
+               currentP->prevP->nextP = NULL;
+            }
+            listP->tailP           = currentP->prevP;
+         }
+         //3. Deleting in between
+         else {
+            currentP->prevP->nextP = currentP->nextP;
+            currentP->nextP->prevP = currentP->prevP;
+         }
+         listP->count--;
+         free(currentP);
+         return 1;
+      }
+      currentP = currentP->nextP;
+   }
+   return 0;
+}
+
+int insertNode ( listPT listP, int data ) {
    ASSERT ( !listP, "List not allocated" );
    // Insertion at beginning
    if(listP->headP == NULL || listP->headP->data > data) {
@@ -36,6 +115,7 @@ void insertNode ( listPT listP, int data ) {
       nodeP->nextP        = listP->headP;
       listP->headP        = nodeP;
       listP->count++;
+      return 1;
    }
    // Insertion in between
    else{
@@ -54,11 +134,12 @@ void insertNode ( listPT listP, int data ) {
             currentP->nextP        = nodeP;
             nodeP->prevP           = currentP;
             listP->count++;
-            break;
+            return 1;
          }
          currentP         = currentP->nextP;
       }
    }
+   return 0;
 }
 
 nodePT createNode ( int data ) {
@@ -77,5 +158,20 @@ void main () {
    insertNode( listP, 3 );
    insertNode( listP, 0 );
    printList(listP, LIST_DIR_FWD);
+   printf("\n");
+   //deleteNode( listP, 5 );
+   //deleteNode( listP, 1 );
+   //deleteNode( listP, 3 );
+   //deleteNode( listP, 3 );
+   //deleteNode( listP, 2 );
+   //deleteNode( listP, 0 );
+   //insertNode( listP, 1 );
+   //insertNode( listP, 2 );
+   //insertNode( listP, 5 );
+   //insertNode( listP, 3 );
+   //insertNode( listP, 0 );
+   //insertNode( listP, 3 );
+   printList(listP, LIST_DIR_FWD);
+   printf("\n");
    printList(listP, LIST_DIR_BKD);
 }

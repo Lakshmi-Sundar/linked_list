@@ -4,6 +4,7 @@
 #include<stdio.h>
 #include<malloc.h>
 #include<stdlib.h>
+#include<stdbool.h>
 
 typedef struct _nodeT* nodePT;
 typedef struct _listT* listPT;

@@ -1,5 +1,4 @@
 #include "main.h"
-#include "main.h"
 
 #define ASSERT( cond, format, ... ) \
    if( cond ){ \
@@ -78,7 +77,7 @@ int deleteNode (listPT listP, int data ) {
             else 
                listP->tailP           = currentP->nextP;
             listP->headP           = currentP->nextP;
-       
+
          }
          //2. Deleting the last node
          else if(currentP->nextP == NULL) {
@@ -100,6 +99,100 @@ int deleteNode (listPT listP, int data ) {
    }
    return 0;
 }
+
+bool pushHead ( listPT listP, int data ) {
+   ASSERT ( !listP, "List not allocated" );
+   nodePT nodeP = createNode(data);
+   //1. Insert when headP == NULL
+   if(listP->headP != NULL) {
+      listP->headP->prevP = nodeP;
+      nodeP->nextP        = listP->headP;
+   }
+   else
+      listP->tailP        = nodeP;
+   listP->headP           = nodeP;
+   listP->count++;
+   return true;
+}
+
+bool pushTail ( listPT listP, int data ) {
+   nodePT nodeP = createNode(data);
+   if(listP->tailP != NULL) {
+      listP->tailP->nextP = nodeP;
+      nodeP->prevP        = listP->tailP;
+   }
+   else
+      listP->headP        = nodeP;
+   listP->tailP           = nodeP;
+   listP->count++;
+   return true;
+}
+
+bool pushNth ( listPT listP, int n, int data ) {
+   ASSERT ( !listP, "List not allocated" );
+   if(!(n >= 0 && n <= listP->count))
+      return false;
+
+   if(n == listP->count) 
+      return pushTail ( listP, data );
+   if(n == 0)
+      return pushHead ( listP, data );
+
+   nodePT nodeP     = createNode(data);
+   nodePT currentP  = listP->headP;
+
+   while(--n) {
+      currentP = currentP->nextP;
+   }
+   ASSERT ( currentP->nextP == NULL, "Unexpected next null found" );
+   nodeP->nextP           = currentP->nextP;
+   currentP->nextP->prevP = nodeP;
+   currentP->nextP        = nodeP;
+   nodeP->prevP           = currentP;
+   listP->count++;
+   return true;
+}
+
+int popHead (listPT listP) {
+   if(listP->headP == NULL) return -1;
+   int data            = listP->headP->data;
+   nodePT deleteP      = listP->headP;
+   listP->headP        = listP->headP->nextP;
+   if(listP->headP != NULL) listP->headP->prevP = NULL;
+   else                     listP->tailP        = NULL;
+   listP->count--;
+   free(deleteP);
+   return data;
+}
+
+int popTail (listPT listP) {
+   if(listP->tailP == NULL) return -1;
+   int data            = listP->tailP->data;
+   nodePT deleteP      = listP->tailP;
+   listP->tailP        = listP->tailP->prevP;
+   if(listP->tailP != NULL) listP->tailP->nextP = NULL;
+   else                     listP->headP        = NULL;
+   listP->count--;
+   free(deleteP);
+   return data;
+}
+
+int popNth (listPT listP, int n) {
+   if(!(n >= 0 && n <= listP->count)) return -1;
+   if(n == listP->count)              return popTail (listP);
+   if(n == 0)                         return popHead (listP);
+   nodePT currentP         = listP->headP;
+   while(n--) currentP     = currentP->nextP; 
+   ASSERT ( currentP->nextP == NULL, "Unexpected next null found" );
+   ASSERT ( currentP->prevP == NULL, "Unexpected prev null found" );
+   int data                = currentP->data;
+   currentP->prevP->nextP  = currentP->nextP;
+   currentP->nextP->prevP  = currentP->prevP;
+   listP->count--;
+   free(currentP);
+   return data;
+}
+
 
 int insertNode ( listPT listP, int data ) {
    ASSERT ( !listP, "List not allocated" );
@@ -152,25 +245,23 @@ nodePT createNode ( int data ) {
 
 void main () {
    listPT listP = (listPT) calloc( 1, sizeof(listT) );
-   insertNode( listP, 1 );
-   insertNode( listP, 2 );
-   insertNode( listP, 5 );
-   insertNode( listP, 3 );
-   insertNode( listP, 0 );
+   //   insertNode( listP, 1 );
+   //   insertNode( listP, 2 );
+   //   insertNode( listP, 5 );
+   //   insertNode( listP, 3 );
+   //   insertNode( listP, 0 );
+   pushNth(listP, 0, 5);
+   pushHead(listP, 0);
+   pushTail(listP, 3);
+   pushNth(listP, 1, 7);
+   pushTail(listP, 0);
+   pushHead(listP, 2);
+   pushNth(listP, 1, 2);
+   popHead(listP);
+   popTail(listP);
+   popNth(listP, 3);
    printList(listP, LIST_DIR_FWD);
    printf("\n");
-   //deleteNode( listP, 5 );
-   //deleteNode( listP, 1 );
-   //deleteNode( listP, 3 );
-   //deleteNode( listP, 3 );
-   //deleteNode( listP, 2 );
-   //deleteNode( listP, 0 );
-   //insertNode( listP, 1 );
-   //insertNode( listP, 2 );
-   //insertNode( listP, 5 );
-   //insertNode( listP, 3 );
-   //insertNode( listP, 0 );
-   //insertNode( listP, 3 );
    printList(listP, LIST_DIR_FWD);
    printf("\n");
    printList(listP, LIST_DIR_BKD);

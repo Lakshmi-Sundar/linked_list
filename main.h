@@ -1,3 +1,14 @@
+/*H**********************************************************************
+* FILENAME    :       main.h 
+* DESCRIPTION :       Linked list library header file 
+* NOTES       :       -NA-
+*
+* AUTHOR      :       Vijayalakshmi Sundar     START DATE :   22 Dec 17
+*
+* CHANGES :
+*
+*H***********************************************************************/
+
 #ifndef _MAIN_H //{
 #define _MAIN_H
 

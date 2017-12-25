@@ -141,9 +141,19 @@ bool pushNth ( listPT listP, int n, int data ) {
    nodePT nodeP     = createNode(data);
    nodePT currentP  = listP->headP;
 
-   while(--n) {
-      currentP = currentP->nextP;
+#ifdef PUSH_POP_PERF_HACK
+   if(n <= (listP->count)/2) {
+      currentP  = listP->headP;
+      while(--n) currentP = currentP->nextP;
    }
+   else{
+      currentP  = listP->tailP;
+      while( listP->count - (n++) ) currentP = currentP->prevP;
+   }
+#else
+   while(--n) currentP = currentP->nextP;
+#endif
+
    ASSERT ( currentP->nextP == NULL, "Unexpected next null found" );
    nodeP->nextP           = currentP->nextP;
    currentP->nextP->prevP = nodeP;
@@ -182,7 +192,20 @@ int popNth (listPT listP, int n) {
    if(n == listP->count)              return popTail (listP);
    if(n == 0)                         return popHead (listP);
    nodePT currentP         = listP->headP;
-   while(n--) currentP     = currentP->nextP; 
+
+#ifdef PUSH_POP_PERF_HACK
+   if(n <= (listP->count)/2) {
+      currentP  = listP->headP;
+      while(n--) currentP = currentP->nextP;
+   }
+   else{
+      currentP  = listP->tailP;
+      while( listP->count - (++n) ) currentP = currentP->prevP;
+   }
+#else
+   while(n--) currentP = currentP->nextP;
+#endif
+
    ASSERT ( currentP->nextP == NULL, "Unexpected next null found" );
    ASSERT ( currentP->prevP == NULL, "Unexpected prev null found" );
    int data                = currentP->data;

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -x
+
+gcc ll.c -c
+gcc main.c -c
+gcc ll.o main.o -o exec

@@ -1,4 +1,5 @@
 #!/bin/bash
 
 set -x
-rm -rf ll.o main.o exec
+rm -rf build
+rm -rf exec

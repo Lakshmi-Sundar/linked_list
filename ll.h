@@ -23,7 +23,7 @@ typedef struct _listT* listPT;
 typedef struct _nodeT {
    nodePT nextP;
    nodePT prevP;
-   int data;
+   void*  data;
 }nodeT;
 
 typedef struct _listT{
@@ -38,16 +38,7 @@ typedef enum _listDirT{
 }listDirT;
 
 //--------------------------- PROTOTYPES BEGIN ---------------------
-int listNodeCount ( listPT listP );
-void printList (listPT listP, listDirT dir);
-void func( int *dataP, int userData );
-void forEach (listPT listP, int userData);
-bool pushHead ( listPT listP, int data );
-bool pushTail ( listPT listP, int data );
-bool pushNth ( listPT listP, int n, int data );
-int popHead (listPT listP);
-int popTail (listPT listP);
-int popNth (listPT listP, int n);
+#include "ll_proto.h"
 //---------------------------- PROTOTYPES END ----------------------
 
 #endif //} _LL_H

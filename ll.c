@@ -18,7 +18,29 @@
       exit(0); \
    }
 
-static nodePT createNode ( int data ) {
+/*!public*/
+listPT createList()
+/*!endpublic*/
+{
+   return calloc (1, sizeof(listT));
+}
+
+/*!public*/
+void destroyList( listPT listP )
+/*!endpublic*/
+{
+   ASSERT ( !listP, "List not allocated" );
+   nodePT currentP = listP->headP;
+   while( currentP != NULL ) {
+      listP->headP    = currentP->nextP;
+      free( currentP->data );
+      free( currentP );
+      currentP        = listP->headP;
+   }
+   free( listP );
+}
+
+static nodePT createNode ( void* data ) {
    nodePT nodeP = (nodePT) calloc (1,sizeof(nodeT));
    // data on RHS is the one being passed in this function
    // data on LHS is the member of nodeT data structure
@@ -26,34 +48,45 @@ static nodePT createNode ( int data ) {
    return nodeP;
 }
 
-inline int listNodeCount ( listPT listP ) {
+/*!public*/
+int listNodeCount ( listPT listP ) 
+/*!endpublic*/
+{
    ASSERT ( !listP, "List not allocated" );
    return listP->count;
 }
 
 
-void printList (listPT listP, listDirT dir) {
+/*!public*/
+void printList (listPT listP, listDirT dir) 
+/*!endpublic*/
+{
    ASSERT ( !listP, "List not allocated" );
    nodePT currentP    = (dir == LIST_DIR_FWD) ? listP->headP : listP->tailP; 
    while( currentP != NULL ) {
-      printf("%d\n", currentP->data);
+      printf("%d\n", *((int*)(currentP->data)));
       currentP        = (dir == LIST_DIR_FWD) ? currentP->nextP : currentP->prevP;
    }
 }
 
-void func( int *dataP, int userData ) {
-   *dataP            += userData;
-}
+extern void func( void*, void* );
 
-void forEach (listPT listP, int userData) {
+/*!public*/
+void forEach (listPT listP, void* userData) 
+/*!endpublic*/
+{
+   ASSERT ( !listP, "List not allocated" );
    nodePT currentP = listP->headP;
    while( currentP != NULL ) {
-      func ( &(currentP->data), userData );
+      func ( currentP->data, userData );
       currentP = currentP->nextP;
    }
 }
 
-bool pushHead ( listPT listP, int data ) {
+/*!public*/
+bool pushHead ( listPT listP, void* data ) 
+/*!endpublic*/
+{
    ASSERT ( !listP, "List not allocated" );
    nodePT nodeP = createNode(data);
    //1. Insert when headP == NULL
@@ -68,7 +101,11 @@ bool pushHead ( listPT listP, int data ) {
    return true;
 }
 
-bool pushTail ( listPT listP, int data ) {
+/*!public*/
+bool pushTail ( listPT listP, void* data ) 
+/*!endpublic*/
+{
+   ASSERT ( !listP, "List not allocated" );
    nodePT nodeP = createNode(data);
    if(listP->tailP != NULL) {
       listP->tailP->nextP = nodeP;
@@ -81,7 +118,10 @@ bool pushTail ( listPT listP, int data ) {
    return true;
 }
 
-bool pushNth ( listPT listP, int n, int data ) {
+/*!public*/
+bool pushNth ( listPT listP, int n, void* data ) 
+/*!endpublic*/
+{
    ASSERT ( !listP, "List not allocated" );
    if(!(n >= 0 && n <= listP->count))
       return false;
@@ -116,11 +156,15 @@ bool pushNth ( listPT listP, int n, int data ) {
    return true;
 }
 
-int popHead (listPT listP) {
-   if(listP->headP == NULL) return -1;
-   int data            = listP->headP->data;
-   nodePT deleteP      = listP->headP;
-   listP->headP        = listP->headP->nextP;
+/*!public*/
+void* popHead (listPT listP) 
+/*!endpublic*/
+{
+   ASSERT ( !listP, "List not allocated" );
+   if(listP->headP == NULL) return NULL;
+   void* data            = listP->headP->data;
+   nodePT deleteP        = listP->headP;
+   listP->headP          = listP->headP->nextP;
    if(listP->headP != NULL) listP->headP->prevP = NULL;
    else                     listP->tailP        = NULL;
    listP->count--;
@@ -128,11 +172,15 @@ int popHead (listPT listP) {
    return data;
 }
 
-int popTail (listPT listP) {
-   if(listP->tailP == NULL) return -1;
-   int data            = listP->tailP->data;
-   nodePT deleteP      = listP->tailP;
-   listP->tailP        = listP->tailP->prevP;
+/*!public*/
+void* popTail (listPT listP) 
+/*!endpublic*/
+{
+   ASSERT ( !listP, "List not allocated" );
+   if(listP->tailP == NULL) return NULL;
+   void* data            = listP->tailP->data;
+   nodePT deleteP        = listP->tailP;
+   listP->tailP          = listP->tailP->prevP;
    if(listP->tailP != NULL) listP->tailP->nextP = NULL;
    else                     listP->headP        = NULL;
    listP->count--;
@@ -140,8 +188,12 @@ int popTail (listPT listP) {
    return data;
 }
 
-int popNth (listPT listP, int n) {
-   if(!(n >= 0 && n <= listP->count)) return -1;
+/*!public*/
+void* popNth (listPT listP, int n) 
+/*!endpublic*/
+{
+   ASSERT ( !listP, "List not allocated" );
+   if(!(n >= 0 && n <= listP->count)) return NULL;
    if(n == listP->count)              return popTail (listP);
    if(n == 0)                         return popHead (listP);
    nodePT currentP         = listP->headP;
@@ -161,7 +213,7 @@ int popNth (listPT listP, int n) {
 
    ASSERT ( currentP->nextP == NULL, "Unexpected next null found" );
    ASSERT ( currentP->prevP == NULL, "Unexpected prev null found" );
-   int data                = currentP->data;
+   void* data                = currentP->data;
    currentP->prevP->nextP  = currentP->nextP;
    currentP->nextP->prevP  = currentP->prevP;
    listP->count--;

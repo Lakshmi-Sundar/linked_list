@@ -38,7 +38,7 @@ typedef enum _listDirT{
 }listDirT;
 
 //--------------------------- PROTOTYPES BEGIN ---------------------
-#include "ll_proto.h"
+#include "build/ll_proto.h"
 //---------------------------- PROTOTYPES END ----------------------
 
 #endif //} _LL_H

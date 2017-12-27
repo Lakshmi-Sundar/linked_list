@@ -89,5 +89,4 @@ void main () {
    //forEach( listP, 5 );
    printf("\n");
    printList(listP, LIST_DIR_FWD);
-   printf("\n");
 }

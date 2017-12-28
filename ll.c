@@ -26,14 +26,14 @@ listPT createList()
 }
 
 /*!public*/
-void destroyList( listPT listP )
+void destroyList( listPT listP, void (*destroyP)(void*))
 /*!endpublic*/
 {
    ASSERT ( !listP, "List not allocated" );
    nodePT currentP = listP->headP;
    while( currentP != NULL ) {
       listP->headP    = currentP->nextP;
-      free( currentP->data );
+      (*destroyP)( currentP->data );
       free( currentP );
       currentP        = listP->headP;
    }
@@ -69,16 +69,16 @@ void printList (listPT listP, listDirT dir)
    }
 }
 
-extern void func( void*, void* );
+//extern void func( void*, void* );
 
 /*!public*/
-void forEach (listPT listP, void* userData) 
+void forEach (listPT listP, void* userData, void (*funcP) (void*, void*) ) 
 /*!endpublic*/
 {
    ASSERT ( !listP, "List not allocated" );
    nodePT currentP = listP->headP;
    while( currentP != NULL ) {
-      func ( currentP->data, userData );
+      (*funcP) ( currentP->data, userData );
       currentP = currentP->nextP;
    }
 }

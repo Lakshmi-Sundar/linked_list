@@ -18,50 +18,7 @@ typedef struct _dnaT{
    char   G;
 }dnaT;
 
-//void func1( int *dataP, int userData ) {
-//   *dataP            += userData;
-//}
-//
-//void func2( int *dataP, int userData ) {
-//   *dataP            *= userData;
-//}
-//
-//void main () {
-//   listPT listP = (listPT) calloc( 1, sizeof(listT) );
-//   pushNth(listP, 0, 5);
-//   pushHead(listP, 0);
-//   pushTail(listP, 3);
-//   pushNth(listP, 1, 7);
-//   pushTail(listP, 0);
-//   pushHead(listP, 2);
-//   pushNth(listP, 1, 2);
-//   popHead(listP);
-//   popTail(listP);
-//   popNth(listP, 3);
-//   printList(listP, LIST_DIR_FWD);
-//   forEach( listP, func1, 5 );
-//   printf("\n");
-//   printList(listP, LIST_DIR_FWD);
-//   printf("\n");
-//
-//   listPT list1P = (listPT) calloc( 1, sizeof(listT) );
-//   pushNth(list1P, 0, 5);
-//   pushHead(list1P, 0);
-//   pushTail(list1P, 3);
-//   pushNth(list1P, 1, 7);
-//   pushTail(list1P, 0);
-//   pushHead(list1P, 2);
-//   pushNth(list1P, 1, 2);
-//   popHead(list1P);
-//   popTail(list1P);
-//   printList(list1P, LIST_DIR_FWD);
-//   printf("\n");
-//   forEach( list1P, func2, 100 );
-//   printList(list1P, LIST_DIR_FWD);
-//   printf("\n");
-//}
-
-void func( void* dataP, void* userData ) {
+void func( void *dataP, void *userData ) {
    *(int*)dataP            += *(int*)userData;
 }
 
@@ -86,7 +43,8 @@ void main () {
    free(popTail(listP));
    free(popNth(listP, 3));
    printList(listP, LIST_DIR_FWD);
-   //forEach( listP, 5 );
+   forEach( listP, prepareData(500), func );
    printf("\n");
    printList(listP, LIST_DIR_FWD);
+   destroyList( listP, free );
 }

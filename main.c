@@ -22,6 +22,10 @@ void func( void *dataP, void *userData ) {
    *(int*)dataP            += *(int*)userData;
 }
 
+bool compare( void* data, void* userData ){
+   return *(int*)data == *(int*)userData;
+}
+
 void* prepareData( int data ){
    int* dataP = (int*) calloc(1, sizeof(int));
    *dataP     = data;
@@ -44,7 +48,8 @@ void main () {
    free(popNth(listP, 3));
    printList(listP, LIST_DIR_FWD);
    forEach( listP, prepareData(500), func );
-   printf("\n");
+   printf("Index: %d\n", findCustomIndex(listP, prepareData(500), compare));
+   printf("Index: %d\n", findCustomIndex(listP, prepareData(509), compare));
    printList(listP, LIST_DIR_FWD);
    destroyList( listP, free );
 }

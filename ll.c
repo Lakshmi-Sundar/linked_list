@@ -221,3 +221,16 @@ void* popNth (listPT listP, int n)
    return data;
 }
 
+/*!public*/
+int findCustomIndex(listPT listP, void* userData, bool (*compareP)(void*, void*)) 
+/*!endpublic*/
+{
+   int count       = 0;
+   nodePT currentP = listP->headP;
+   while(!(*compareP)(currentP->data, userData)) {
+      count++;
+      currentP = currentP->nextP;
+      if(currentP == NULL) return -1;
+   }
+   return count;
+}

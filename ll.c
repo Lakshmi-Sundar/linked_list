@@ -18,16 +18,16 @@
       exit(0); \
    }
 
-/*!public*/
+/*!proto*/
 listPT createList()
-/*!endpublic*/
+/*!endproto*/
 {
    return calloc (1, sizeof(listT));
 }
 
-/*!public*/
+/*!proto*/
 void destroyList( listPT listP, void (*destroyP)(void*))
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
    nodePT currentP = listP->headP;
@@ -48,32 +48,32 @@ static nodePT createNode ( void* data ) {
    return nodeP;
 }
 
-/*!public*/
+/*!proto*/
 int listNodeCount ( listPT listP ) 
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
    return listP->count;
 }
 
 
-/*!public*/
+/*!proto*/
 void printList (listPT listP, listDirT dir) 
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
    nodePT currentP    = (dir == LIST_DIR_FWD) ? listP->headP : listP->tailP; 
    while( currentP != NULL ) {
-      printf("%d\n", *((int*)(currentP->data)));
+      printf("%p\n", (currentP->data));
       currentP        = (dir == LIST_DIR_FWD) ? currentP->nextP : currentP->prevP;
    }
 }
 
 //extern void func( void*, void* );
 
-/*!public*/
+/*!proto*/
 void forEach (listPT listP, void* userData, void (*funcP) (void*, void*) ) 
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
    nodePT currentP = listP->headP;
@@ -83,9 +83,9 @@ void forEach (listPT listP, void* userData, void (*funcP) (void*, void*) )
    }
 }
 
-/*!public*/
+/*!proto*/
 bool pushHead ( listPT listP, void* data ) 
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
    nodePT nodeP = createNode(data);
@@ -101,9 +101,9 @@ bool pushHead ( listPT listP, void* data )
    return true;
 }
 
-/*!public*/
+/*!proto*/
 bool pushTail ( listPT listP, void* data ) 
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
    nodePT nodeP = createNode(data);
@@ -118,15 +118,15 @@ bool pushTail ( listPT listP, void* data )
    return true;
 }
 
-/*!public*/
+/*!proto*/
 bool pushNth ( listPT listP, int n, void* data ) 
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
-   if(!(n >= 0 && n <= listP->count))
+   if(n < 0 || n >= listP->count)
       return false;
 
-   if(n == listP->count) 
+   if(n == listP->count - 1) 
       return pushTail ( listP, data );
    if(n == 0)
       return pushHead ( listP, data );
@@ -156,9 +156,9 @@ bool pushNth ( listPT listP, int n, void* data )
    return true;
 }
 
-/*!public*/
+/*!proto*/
 void* popHead (listPT listP) 
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
    if(listP->headP == NULL) return NULL;
@@ -172,9 +172,25 @@ void* popHead (listPT listP)
    return data;
 }
 
-/*!public*/
+/*!proto*/
+void* peekHead (listPT listP)
+/*!endproto*/
+{
+   ASSERT ( !listP, "List not allocated" );
+   return (listP->headP == NULL) ? NULL : listP->headP->data;
+}
+
+/*!proto*/
+void* peekTail (listPT listP)
+/*!endproto*/
+{
+   ASSERT ( !listP, "List not allocated" );
+   return (listP->tailP == NULL) ? NULL : listP->tailP->data;
+}
+
+/*!proto*/
 void* popTail (listPT listP) 
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
    if(listP->tailP == NULL) return NULL;
@@ -188,13 +204,13 @@ void* popTail (listPT listP)
    return data;
 }
 
-/*!public*/
+/*!proto*/
 void* popNth (listPT listP, int n) 
-/*!endpublic*/
+/*!endproto*/
 {
    ASSERT ( !listP, "List not allocated" );
-   if(!(n >= 0 && n <= listP->count)) return NULL;
-   if(n == listP->count)              return popTail (listP);
+   if(n < 0 || n >= listP->count)     return NULL;
+   if(n == listP->count - 1)          return popTail (listP);
    if(n == 0)                         return popHead (listP);
    nodePT currentP         = listP->headP;
 
@@ -221,9 +237,27 @@ void* popNth (listPT listP, int n)
    return data;
 }
 
-/*!public*/
+/*!proto*/
+void* peekNth (listPT listP, int n)
+/*!endproto*/
+{
+   ASSERT ( !listP, "List not allocated" );
+   if(n < 0 || n >= listP->count)     return NULL;
+   if(n == listP->count - 1)          return peekTail (listP);
+   if(n == 0)                         return peekHead (listP);
+
+   nodePT currentP         = listP->headP;
+   while(n--) currentP     = currentP->nextP;
+
+   ASSERT ( currentP->nextP == NULL, "Unexpected next null found" );
+   ASSERT ( currentP->prevP == NULL, "Unexpected prev null found" );
+   
+   return currentP->data;
+}
+
+/*!proto*/
 int findCustomIndex(listPT listP, void* userData, bool (*compareP)(void*, void*)) 
-/*!endpublic*/
+/*!endproto*/
 {
    int count       = 0;
    nodePT currentP = listP->headP;
